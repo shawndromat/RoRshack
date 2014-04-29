@@ -2,7 +2,8 @@ class Route
   attr_reader :pattern, :http_method, :controller_class, :action_name
 
   def initialize(pattern, http_method, controller_class, action_name)
-    @pattern, @http_method = pattern, http_method
+    @pattern = (pattern.is_a?(Regexp)) ? pattern : pattern.to_s
+    @http_method = http_method
     @controller_class, @action_name = controller_class, action_name
   end
 
@@ -16,7 +17,7 @@ class Route
   # instantiate controller and call controller action
   def run(req, res)
     instance = @controller_class.new(req, res, {})
-    instance.send(:invoke_action, @action_name)
+    instance.invoke_action(@action_name)
   end
 end
 
