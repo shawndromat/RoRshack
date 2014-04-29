@@ -20,8 +20,8 @@ class ControllerBase
   def render_content(content, type)
     res.content_type = type
     res.body = content
-    @already_built_response = true
     session.store_session(@res)
+    @already_built_response = true
   end
 
   # helper method to alias @already_built_response
@@ -54,5 +54,7 @@ class ControllerBase
 
   # use this with the router to call action_name (:index, :show, :create...)
   def invoke_action(name)
+    self.name
+    render(name.to_s) unless @already_built_response
   end
 end
