@@ -6,18 +6,20 @@ require_relative 'session'
 
 
 class ControllerBase
-  attr_reader :params, :req, :res
+  attr_reader :req, :res, :params
 
   # setup the controller
   def initialize(req, res, route_params = {})
     @req = req
     @res = res
+    @params = Params.new(req, route_params)
   end
 
   # populate the response with content
   # set the responses content type to the given type
   # later raise an error if the developer tries to double render
   def render_content(content, type)
+    raise "already rendered" if already_built_response?
     res.content_type = type
     res.body = content
     session.store_session(@res)
@@ -31,6 +33,7 @@ class ControllerBase
 
   # set the response status code and header
   def redirect_to(url)
+    raise "already rendered" if already_built_response?
     res.status = 302
     res["Location"] = url
     @already_built_response = true
@@ -44,7 +47,7 @@ class ControllerBase
     f = File.read("views/#{class_name}/#{template_name}.html.erb")
     template = ERB.new(f)
     b = binding()
-    render_content(template.result(b), 'html')
+    render_content(template.result(b), 'text/html')
   end
 
   # method exposing a `Session` object

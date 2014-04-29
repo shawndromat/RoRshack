@@ -6,16 +6,13 @@ class Params
   # 2. post body
   # 3. route params
   def initialize(req, route_params = {})
-    @contents = {}
-    @query_string_params = get_query_params(req)
-    @body_params = get_body_params(req)
-    @contents = @query_string_params.merge(@contents)
-    @contents = @contents.merge(@body_params)
+    @params = deep_merge(route_params, get_query_params(req))
+    @params = deep_merge(@params, get_body_params(req))
     @permitted = []
   end
 
   def [](key)
-    @contents[key]
+    @params[key]
   end
 
   def permit(*keys)
@@ -23,7 +20,7 @@ class Params
   end
 
   def require(key)
-    raise AttributeNotFoundError unless @contents.keys.include?(key)
+    raise AttributeNotFoundError unless @params.keys.include?(key)
   end
 
   def permitted?(key)
@@ -31,7 +28,7 @@ class Params
   end
 
   def to_s
-    @contents.to_json
+    @params.to_json
   end
 
   class AttributeNotFoundError < ArgumentError; end;
