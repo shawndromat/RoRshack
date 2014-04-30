@@ -12,9 +12,7 @@ trap('INT') { server.shutdown }
 
 class StatusController < ControllerBase
   def index
-    statuses = ["s1", "s2", "s3"]
-
-    render_content(statuses.to_json, "text/json")
+    @statuses = ["s1", "s2", "s3"]
   end
 
   def show
@@ -22,6 +20,10 @@ class StatusController < ControllerBase
   end
   
   def new
+  end
+  
+  def edit
+    @id = params[:idactive_record_lite]
   end
 end
 
@@ -40,6 +42,7 @@ router.draw do
 
   # uncomment this when you get to route params
   get Regexp.new("^/statuses/(?<id>\\d+)$"), StatusController, :show
+  get Regexp.new("^/statuses/(?<id>\\d+)$/edit"), StatusController, :edit
   get Regexp.new("^/statuses/new$"), StatusController, :new
 end
 

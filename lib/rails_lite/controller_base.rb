@@ -3,9 +3,26 @@ require 'active_support/inflector'
 require_relative 'params'
 require_relative 'session'
 
+module UrlHelper
+  def method_missing(method_name, arg = nil)
+    class_name = self.class.to_s[0..-11].downcase
+    method_name = method_name.to_s.downcase
+    if method_name.end_with?("_path")
+      string = method_name[0..-6]
+      if arg == nil
+        return "/#{class_name.pluralize}" if string == class_name.pluralize
+        return "/#{class_name.pluralize}/new" if string == "new_#{class_name}"
+      elsif arg.is_a? Integer
+        return "/#{class_name.pluralize}/#{arg}" if string == class_name
+        return "/#{class_name.pluralize}/#{arg}/edit" if string == "edit_#{class_name}"
+      end
+    end
+  end
+end
 
 
 class ControllerBase
+  include UrlHelper
   attr_reader :req, :res, :params
 
   # setup the controller
@@ -61,3 +78,5 @@ class ControllerBase
     render(name.to_s) unless @already_built_response
   end
 end
+
+
