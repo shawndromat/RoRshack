@@ -17,10 +17,12 @@ class Params
 
   def permit(*keys)
     keys.each { |key| @permitted << key}
+    keys
   end
 
   def require(key)
     raise AttributeNotFoundError unless @params.keys.include?(key)
+    self[key]
   end
 
   def permitted?(key)

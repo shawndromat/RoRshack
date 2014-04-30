@@ -1,2 +1,7 @@
-<h1>users</h1>
-index
+<h1>Users</h1>
+
+<a href="<%= new_user_path %>">Add new user</a>
+
+<% @users.each do |user| %>
+<p><a href="<%= user_url(user.id) %>"><%= user.fname%> <%= user.lname %></a></p>
+<% end %>

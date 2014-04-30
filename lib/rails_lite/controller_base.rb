@@ -16,6 +16,16 @@ module UrlHelper
         return "/#{class_name.pluralize}/#{arg}" if string == class_name
         return "/#{class_name.pluralize}/#{arg}/edit" if string == "edit_#{class_name}"
       end
+    elsif method_name.end_with?("_url")
+      string = method_name[0..-5]
+      prefix = "http://localhost:8080"
+      if arg == nil
+        return "#{prefix}/#{class_name.pluralize}" if string == class_name.pluralize
+        return "#{prefix}/#{class_name.pluralize}/new" if string == "new_#{class_name}"
+      elsif arg.is_a? Integer
+        return "#{prefix}/#{class_name.pluralize}/#{arg}" if string == class_name
+        return "#{prefix}/#{class_name.pluralize}/#{arg}/edit" if string == "edit_#{class_name}"
+      end
     end
   end
 end
