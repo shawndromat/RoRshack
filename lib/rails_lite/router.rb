@@ -18,7 +18,7 @@ class Route
   def run(req, res)
     route_params = {}
     route_match = pattern.match(req.path)
-    route_match.names.each { |key| route_params[key] = route_match[key]}
+    route_match.names.each { |key| route_params[key.to_sym] = route_match[key]}
     instance = @controller_class.new(req, res, route_params)
     instance.invoke_action(@action_name)
   end
@@ -44,7 +44,7 @@ class Router
 
   # make each of these methods that
   # when called add route
-  [:get, :post, :put, :delete].each do |http_method|
+  [:get, :post, :put, :delete, :show].each do |http_method|
     define_method(http_method) do |pattern, controller_class, action_name|
       add_route(pattern, http_method, controller_class, action_name)
     end

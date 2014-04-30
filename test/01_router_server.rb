@@ -20,6 +20,9 @@ class StatusController < ControllerBase
   def show
     render_content("status ##{params[:id]}", "text/text")
   end
+  
+  def new
+  end
 end
 
 class UserController < ControllerBase
@@ -36,7 +39,8 @@ router.draw do
   get Regexp.new("^/users$"), UserController, :index
 
   # uncomment this when you get to route params
-  # get Regexp.new("^/statuses/(?<id>\\d+)$"), StatusController, :show
+  get Regexp.new("^/statuses/(?<id>\\d+)$"), StatusController, :show
+  get Regexp.new("^/statuses/new$"), StatusController, :new
 end
 
 server.mount_proc '/' do |req, res|
