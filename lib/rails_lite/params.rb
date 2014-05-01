@@ -17,12 +17,13 @@ class Params
 
   def permit(*keys)
     keys.each { |key| @permitted << key}
-    keys
+    @temp.select{ |key| @permitted.include?(key) }
   end
 
   def require(key)
     raise AttributeNotFoundError unless @params.keys.include?(key)
-    self[key]
+    @temp = @params[key]
+    self
   end
 
   def permitted?(key)
