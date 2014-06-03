@@ -2,14 +2,16 @@
 require 'active_support/inflector'
 # require_relative '00_attr_accessor_object.rb'
 
+#akin to ActiveRecord::Base
+
 class SQLObject
-  
+
   def self.columns
     if @columns.nil?
       results = DBConnection.execute2(<<-SQL)
-        SELECT 
+        SELECT
           *
-        FROM 
+        FROM
           #{self.table_name}
       SQL
       @columns = results[0].map(&:to_sym)
@@ -18,13 +20,13 @@ class SQLObject
       @columns
     end
   end
-  
+
   def self.attr_accessor(*names)
     names.each do |name|
       define_method(name) do
         @attributes[name.to_s]
       end
-      
+
       define_method("#{name}=") do |argument|
         @attributes[name.to_s] = argument
       end
@@ -46,7 +48,7 @@ class SQLObject
       FROM
         #{self.table_name}
     SQL
-    
+
     results.map{ |result| self.new(result) }
   end
 
@@ -68,9 +70,9 @@ class SQLObject
 
   def insert
     query = <<-SQL
-      INSERT INTO #{self.class.table_name} 
+      INSERT INTO #{self.class.table_name}
         (#{cols_without_id.map(&:to_s).join(', ')})
-      VALUES 
+      VALUES
         (#{("?" * cols_without_id.length).split("").join(", ")})
     SQL
 
@@ -90,7 +92,7 @@ class SQLObject
     end
   end
 
-  def save 
+  def save
     if attributes["id"] == nil
       insert
     else
@@ -103,7 +105,7 @@ class SQLObject
     cols_without_id.each do |col|
       update_string << "#{col} = ?"
     end
-    
+
     query = <<-SQL
       UPDATE #{self.class.table_name}
       SET #{update_string.join(", ")}
@@ -115,15 +117,12 @@ class SQLObject
   def attribute_values
     @attributes.values
   end
-  
+
   def cols_without_id
     @attributes.reject{ |attr_name, _| attr_name == :id}.keys
   end
-  
+
   def vals_without_id
     @attributes.reject{ |attr_name, value| attr_name == :id}.values
   end
 end
-
-
-

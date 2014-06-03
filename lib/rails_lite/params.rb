@@ -1,7 +1,7 @@
 require 'uri'
 
 class Params
-  # use your initialize to merge params from
+  # initialize merges params from
   # 1. query string
   # 2. post body
   # 3. route params
@@ -37,22 +37,22 @@ class Params
   class AttributeNotFoundError < ArgumentError; end;
 
   private
-  # this should return deeply nested hash
+  # this returns a deeply nested hash
   # argument format
   # user[address][street]=main&user[address][zip]=89436
   # should return
   # { "user" => { "address" => { "street" => "main", "zip" => "89436" } } }
-  
+
   def get_query_params(req)
     return {} if req.query_string == nil
     parse_www_encoded_form(req.query_string)
   end
-  
+
   def get_body_params(req)
     return {} if req.body == nil
     parse_www_encoded_form(req.body)
   end
-  
+
   def parse_www_encoded_form(www_encoded_form)
     decoded_params = {}
     decoded = URI.decode_www_form(www_encoded_form)
